@@ -9,8 +9,6 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(10)
 });
 
-export const env = envSchema.parse(process.env);
-
-export type Env = typeof env;
-export type MongoUri = Env["MONGO_URI"];
+type envServer = z.infer<typeof envSchema>;
+export const parsedEnv: envServer = envSchema.parse(process.env);
 

@@ -1,4 +1,4 @@
-import { env } from "../../../config/env";
+import { parsedEnv } from "../../../config/env";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthticatedUser, LeanUser, SigninUser, SignupUser } from "../../users/types/user.type";
@@ -53,12 +53,12 @@ export class AuthService {
     }
 
     static async logout(refreshToken: string): Promise<void> {
-      if (!refreshToken || !env.JWT_REFRESH_SECRET) return;
+      if (!refreshToken || !parsedEnv.JWT_REFRESH_SECRET) return;
 
       try {
         const { exp } = jwt.verify(
           refreshToken,
-          env.JWT_REFRESH_SECRET
+          parsedEnv.JWT_REFRESH_SECRET
         ) as jwt.JwtPayload;
 
         const expiryDate = exp ? new Date(exp * 1000) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
@@ -79,9 +79,9 @@ export class AuthService {
     }
 
     private static signToken(user: LeanUser): string {
-        if (!env.JWT_SECRET) throw new Error("Jwt tokwn is missing!");
+        if (!parsedEnv.JWT_SECRET) throw new Error("Jwt tokwn is missing!");
         const payload = { sub: user._id, role: user.role, type: "access-jwt"};
-        const token = jwt.sign(payload, env.JWT_SECRET, { 
+        const token = jwt.sign(payload, parsedEnv.JWT_SECRET, { 
             expiresIn: "10m",
             issuer: "product-server",
             audience: `product-client-${user.name}`
@@ -90,9 +90,9 @@ export class AuthService {
     }
 
     private static refreshToken(user: LeanUser): string {
-        if (!env.JWT_REFRESH_SECRET) throw new Error("Refresh token is missing!");
+        if (!parsedEnv.JWT_REFRESH_SECRET) throw new Error("Refresh token is missing!");
         const payload = { sub: user._id, role: user.role, type: "refresh-jwt" };
-        const refresh_token = jwt.sign(payload, env.JWT_REFRESH_SECRET, {
+        const refresh_token = jwt.sign(payload, parsedEnv.JWT_REFRESH_SECRET, {
             expiresIn: "7d",
             issuer: "event-flow-server",
                 audience: `event-flow-client-${user.name}`
@@ -101,13 +101,13 @@ export class AuthService {
     }
 
     static async rotateAccessToken(refreshToken: string): Promise<string> {
-        if (!env.JWT_REFRESH_SECRET) {
+        if (!parsedEnv.JWT_REFRESH_SECRET) {
             throw new Error("JWT_REFRESH_SECRET is not set");
         }
 
         let payload: jwt.JwtPayload;
         try {
-            payload = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET) as jwt.JwtPayload;
+            payload = jwt.verify(refreshToken, parsedEnv.JWT_REFRESH_SECRET) as jwt.JwtPayload;
         } catch {
             throw new Error("Invalid or expired refresh token");
         }
