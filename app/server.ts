@@ -12,9 +12,13 @@ import { swaggerDocs } from './swagger';
 dotenv.config();
 const app = express();
 
+const allowedOrigins = (parsedEnv.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map(s => s.trim());
+
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(express.json());
