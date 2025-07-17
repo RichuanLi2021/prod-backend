@@ -7,6 +7,8 @@
     "dev": "ts-node-dev --respawn --transpile-only app/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "prestart": "npm run build",
+    "postinstall": "npm run build",
     "test": "echo \"Error: no test specified yet\" && exit 0"
   },
   "author": "Group_7",
