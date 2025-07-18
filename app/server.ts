@@ -11,10 +11,7 @@ import { swaggerDocs } from './swagger';
 
 dotenv.config();
 const app = express();
-
-const allowedOrigins = (parsedEnv.ALLOWED_ORIGINS || "")
-  .split(",")
-  .map(s => s.trim());
+const allowedOrigins = parsedEnv.ALLOWED_ORIGINS;
 
 app.use(
   cors({
