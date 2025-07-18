@@ -13,6 +13,12 @@ dotenv.config();
 const app = express();
 const allowedOrigins = parsedEnv.ALLOWED_ORIGINS;
 
+// Check the origin
+app.use((req, _res, next) => {
+  console.log("Incoming Origin:", req.get("Origin"));
+  next();
+});
+
 app.use(
   cors({
     origin: allowedOrigins,
